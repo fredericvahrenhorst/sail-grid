@@ -124,13 +124,25 @@ ALLOWED_FRAME_ANCESTORS=self https://verein.example
 
 ## Deployment (Coolify)
 
+Öffentliches Repository, Quelle „Public GitHub“, Build Pack Docker Compose aus `docker-compose.yaml`. Ein Deploy Key ist nicht nötig. Coolify klont das Repo ohne SSH-Schlüssel.
+
+Der Branch ist `main`. Automatisches Deployen ist ein Schalter an der App. GitHub meldet einen Push nur, wenn im Repository ein Webhook liegt:
+
+- Payload-URL: `https://<coolify-host>/webhooks/source/github/events/manual`
+- Content type: `application/json`
+- Secret: das GitHub-Webhook-Secret der App in Coolify. Es bleibt in Coolify und kommt nicht ins Repository.
+- Ereignis: nur Push
+
+Ohne diesen Webhook bleibt der Schalter wirkungslos. Ein Push auf einen anderen Branch startet keinen Deploy.
+
 1. Repository in Coolify als Docker Compose aus `docker-compose.yaml` anlegen.
 2. Umgebungsvariablen neu setzen. `ADMIN_PASSWORD` und `NUXT_SESSION_PASSWORD` nicht aus einer lokalen `.env` oder aus `.env.example` übernehmen.
 3. `NUXT_PUBLIC_BASE_URL` auf die öffentliche App-Domain setzen, zum Beispiel `https://sailgrid.example.com`.
 4. `NUXT_PUBLIC_LANG` auf `de` oder `en` setzen.
 5. `ALLOWED_FRAME_ANCESTORS` auf die Origin der Vereinswebsite beschränken.
-6. Domain auf den App-Service zeigen, Port `3000`. Mongo bleibt intern und hat keinen öffentlichen Port.
+6. Domain am Compose-Service `app` setzen, Port `3000`. Das allgemeine Domains-Feld gilt für Docker Compose nicht. Mongo bleibt intern und hat keinen öffentlichen Port.
 7. Volume `sailgrid-mongo` behalten, sonst ist die Datenbank beim nächsten Deploy leer.
+8. Webhook wie oben im GitHub-Repository eintragen, damit ein Push auf `main` neu deployed.
 
 Die Produktion startet ohne Boote und ohne Buchungen. `pnpm seed` ist dafür nicht gedacht. Die ersten Daten kommen über `/admin`.
 
@@ -151,21 +163,6 @@ iFrame auf der Vereinsseite:
 `embed=true` blendet Kopfzeile und Verwaltungslink aus. Ein Boot kann direkt offen sein: `?embed=true&boatId=BOOT_ID`.
 
 Kalender-Abo eines Boots: `https://sailgrid.example.com/api/ics/boat/BOOT_ID.ics`
-
-## Sicherheit
-
-- Mutationen prüfen die Session auf dem Server. Die Admin-Seiten leiten nur zusätzlich um.
-- Es gibt ein Admin-Passwort, keine Benutzerkonten.
-- Session-Cookie ist HttpOnly, in Produktion `Secure`, `SameSite=Lax`, zwölf Stunden gültig.
-- Login vergleicht das Passwort in konstanter Zeit und erlaubt fünf Versuche pro Minute und IP. Das Limit liegt im Prozessspeicher und gilt pro Instanz.
-- Schreibende API-Aufrufe mit `Origin`-Header müssen von derselben Origin kommen.
-- Hinweis-HTML lässt nur `p`, `br`, Listen, `strong`, `em`, `a`, `h2` und `h3` zu. Links werden auf `https`, `http` und `mailto` begrenzt.
-- Buchungsfelder sind Text, keine HTML-Ausgabe.
-- Bild-URLs müssen `https` sein. Es gibt keinen Upload.
-- `/admin` und `/login` sind `noindex` und in `robots.txt` gesperrt.
-- ICS enthält nur die öffentlichen Buchungsfelder.
-- Produktion beendet sich, wenn Session- oder Admin-Passwort ein veröffentlichter Platzhalter ist.
-- Schriften und Icons kommen aus dem Build. Die App ruft dafür keine externen Dienste auf.
 
 ## Datenmodell (MongoDB)
 
