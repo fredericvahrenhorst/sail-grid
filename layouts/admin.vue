@@ -1,7 +1,9 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
+import { useSiteSettings } from '@/composables/useSiteSettings';
 
 useSeoMeta({ robots: 'noindex, nofollow' });
+const { siteName } = useSiteSettings();
 const route = useRoute();
 const { t } = useI18n();
 const links = computed(() => [
@@ -24,7 +26,7 @@ const { clear: clearUserSession } = useUserSession();
             <div class="mx-auto flex max-w-5xl flex-wrap items-end justify-between gap-4 px-4 py-5 sm:px-6">
                 <div>
                     <p class="font-brand font-semibold text-4xl leading-none text-ink">
-                        SailGrid
+                        {{ siteName }}
                     </p>
                     <p class="mt-2 text-sm text-mist">
                         {{ t('admin.nav') }}

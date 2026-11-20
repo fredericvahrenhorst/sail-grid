@@ -4,7 +4,8 @@ export default defineEventHandler(async(event) => {
     const booking = await Booking.findById(id).populate('boatId', 'name color');
     if (!booking) throw createError({ statusCode: 404, statusMessage: t('errors.bookingMissing') });
     const dto = serializeBooking(booking);
-    const calendar = createCalendar(`SailGrid – ${dto.boatName}`);
+    const siteName = (await getSettings()).siteName?.trim() || t('meta.title');
+    const calendar = createCalendar(`${siteName} – ${dto.boatName}`);
     calendar.createEvent({
         id: dto.id,
         start: booking.start,

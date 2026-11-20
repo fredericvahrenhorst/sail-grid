@@ -1,8 +1,10 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
+import { useSiteSettings } from '@/composables/useSiteSettings';
 import useCalendarStore from '@/stores/calendar';
 
 const { t } = useI18n();
+const { siteName, clubName } = useSiteSettings();
 const route = useRoute();
 const embed = computed(() => route.query.embed === 'true');
 const calendar = useCalendarStore();
@@ -27,11 +29,11 @@ async function logout() {
                 <div>
                     <p class="font-brand font-semibold text-3xl leading-none tracking-tight text-ink sm:text-4xl">
                         <NuxtLink to="/" class="focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tide">
-                            SailGrid
+                            {{ siteName }}
                         </NuxtLink>
                     </p>
                     <p class="mt-2 max-w-md text-sm text-mist">
-                        {{ t('calendar.tagline') }}
+                        {{ clubName || t('calendar.tagline') }}
                     </p>
                 </div>
                 <div class="flex items-center gap-4">
@@ -62,7 +64,7 @@ async function logout() {
         </header>
         <main :class="embed ? 'px-3 py-3 sm:px-4' : 'mx-auto max-w-6xl px-4 py-6 sm:px-6'">
             <h1 v-if="embed" class="sr-only">
-                {{ t('calendar.srTitle') }}
+                {{ t('calendar.srTitle', { name: siteName }) }}
             </h1>
             <slot />
         </main>

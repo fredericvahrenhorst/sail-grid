@@ -4,15 +4,23 @@ import { readError } from '@/composables/readError';
 
 definePageMeta({ layout: 'admin', middleware: 'admin' });
 const { t } = useI18n();
-const { data, refresh } = await useFetch('/api/settings');
+const { data, refresh } = await useFetch('/api/settings', { key: 'site-settings' });
 const bookingInfoText = ref('');
 const notifyEnabled = ref(false);
+const siteName = ref('');
+const clubName = ref('');
+const metaTitle = ref('');
+const metaDescription = ref('');
 const notice = ref('');
 const error = ref('');
 const pending = ref(false);
 watch(data, (value) => {
     bookingInfoText.value = value?.bookingInfoText || '';
     notifyEnabled.value = Boolean(value?.notifyEnabled);
+    siteName.value = value?.siteName || '';
+    clubName.value = value?.clubName || '';
+    metaTitle.value = value?.metaTitle || '';
+    metaDescription.value = value?.metaDescription || '';
 }, { immediate: true });
 async function save() {
     error.value = '';
@@ -23,6 +31,10 @@ async function save() {
             body: {
                 bookingInfoText: bookingInfoText.value,
                 notifyEnabled: notifyEnabled.value,
+                siteName: siteName.value,
+                clubName: clubName.value,
+                metaTitle: metaTitle.value,
+                metaDescription: metaDescription.value,
             },
         });
         notice.value = t('settings.saved');
@@ -41,14 +53,33 @@ async function save() {
         <p class="mt-2 text-sm text-mist">
             {{ t('settings.intro') }}
         </p>
-        <form class="mt-6 space-y-4" @submit.prevent="save">
-            <ClientOnly>
-                <AdminTipTapEditor v-model="bookingInfoText" />
-            </ClientOnly>
-            <UCheckbox v-model="notifyEnabled" :label="t('settings.notify')" />
-            <p class="text-sm text-mist">
-                {{ t('settings.notifyHint') }}
-            </p>
+        <form class="mt-8 space-y-8" @submit.prevent="save">
+            <section class="space-y-4">
+                <h2 class="text-lg font-bold text-ink">{{ t('settings.general') }}</h2>
+                <UFormField :label="t('settings.siteName')">
+                    <UInput v-model="siteName" :placeholder="t('meta.title')" class="w-full" />
+                </UFormField>
+                <UFormField :label="t('settings.clubName')">
+                    <UInput v-model="clubName" :placeholder="t('calendar.tagline')" class="w-full" />
+                </UFormField>
+                <UFormField :label="t('settings.metaTitle')">
+                    <UInput v-model="metaTitle" :placeholder="t('meta.title')" class="w-full" />
+                </UFormField>
+                <UFormField :label="t('settings.metaDescription')">
+                    <UTextarea v-model="metaDescription" :placeholder="t('meta.description')" class="w-full" />
+                </UFormField>
+                <UCheckbox v-model="notifyEnabled" :label="t('settings.notify')" />
+                <p class="text-sm text-mist">
+                    {{ t('settings.notifyHint') }}
+                </p>
+            </section>
+            <section class="space-y-4 border-t border-line pt-8">
+                <h2 class="text-lg font-bold text-ink">{{ t('settings.popupTitle') }}</h2>
+                <p class="text-sm text-mist">{{ t('settings.popupIntro') }}</p>
+                <ClientOnly>
+                    <AdminTipTapEditor v-model="bookingInfoText" />
+                </ClientOnly>
+            </section>
             <p v-if="notice" class="text-sm font-bold text-tide">{{ notice }}</p>
             <p v-if="error" class="text-sm font-bold text-danger" role="alert">{{ error }}</p>
             <UButton type="submit" :loading="pending">{{ t('settings.save') }}</UButton>

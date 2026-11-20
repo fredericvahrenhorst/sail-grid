@@ -27,6 +27,14 @@ export const bookingSchema = z.object({
 export const settingsSchema = z.object({
     bookingInfoText: z.string().max(20000).optional().default(''),
     notifyEnabled: z.boolean().optional().default(false),
+    siteName: z.string().trim().max(80).optional()
+        .default(''),
+    clubName: z.string().trim().max(120).optional()
+        .default(''),
+    metaTitle: z.string().trim().max(120).optional()
+        .default(''),
+    metaDescription: z.string().trim().max(300).optional()
+        .default(''),
 });
 export const boatOrderSchema = z.object({
     ids: z.array(z.string().trim().min(1)).min(1).max(500),

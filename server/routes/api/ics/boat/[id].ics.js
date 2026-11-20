@@ -12,7 +12,8 @@ export default defineEventHandler(async(event) => {
         start: { $lt: to },
         end: { $gt: from },
     }).sort({ start: 1 }).limit(500);
-    const calendar = createCalendar(`SailGrid – ${boat.name}`);
+    const siteName = (await getSettings()).siteName?.trim() || t('meta.title');
+    const calendar = createCalendar(`${siteName} – ${boat.name}`);
     for (const booking of bookings) {
         calendar.createEvent({
             id: booking._id.toString(),

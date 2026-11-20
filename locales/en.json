@@ -2,7 +2,7 @@
     "meta": {
         "title": "SailGrid",
         "description": "Booking calendar for the club boats.",
-        "loginTitle": "Sign in – SailGrid"
+        "loginTitle": "Sign in – {name}"
     },
     "nav": {
         "addBooking": "Add booking",
@@ -39,7 +39,7 @@
         "liveToday": "In progress today. ",
         "liveShort": "In progress. ",
         "barLabel": "{state}{boat}, {member}. {when}. Click to show the booking.",
-        "srTitle": "SailGrid calendar"
+        "srTitle": "{name} calendar"
     },
     "booking": {
         "title": "Booking",
@@ -110,21 +110,28 @@
         "overview": "Overview",
         "bookings": "Bookings",
         "boats": "Boats",
-        "hint": "Info text",
+        "hint": "Settings",
         "nav": "Admin",
-        "intro": "Boats, bookings, and the info text are maintained here. Visitors can only read the calendar.",
+        "intro": "Boats, bookings, and the settings are maintained here. Visitors can only read the calendar.",
         "editBookings": "Edit bookings",
         "editBoats": "Edit boats ({count})",
-        "editHint": "Info text “How do I book a boat?”",
+        "editHint": "Settings",
         "upcoming": "The coming weeks",
         "empty": "No bookings in this period yet."
     },
     "settings": {
-        "title": "How do I book a boat?",
-        "intro": "This text appears in the calendar. It is cleaned before it is saved.",
+        "title": "Settings",
+        "intro": "Name, club, and the search texts are at the top. The popup text is below.",
+        "general": "General",
+        "popupTitle": "Text in the “How do I book a boat?” popup",
+        "popupIntro": "This text opens in the calendar when someone clicks “How do I book a boat?”. It is cleaned before it is saved.",
+        "siteName": "Name",
+        "clubName": "Club name",
+        "metaTitle": "Meta title",
+        "metaDescription": "Meta description",
         "notify": "Prepare notifications",
         "notifyHint": "The switch only stores the preference. No email is sent yet.",
-        "saved": "Info text saved",
+        "saved": "Saved",
         "save": "Save"
     },
     "editor": {

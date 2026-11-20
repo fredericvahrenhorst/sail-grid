@@ -31,5 +31,9 @@ export function serializeSettings(setting) {
     return {
         bookingInfoText: setting.bookingInfoText || '',
         notifyEnabled: Boolean(setting.notifyEnabled),
+        siteName: setting.siteName || '',
+        clubName: setting.clubName || '',
+        metaTitle: setting.metaTitle || '',
+        metaDescription: setting.metaDescription || '',
     };
 }

@@ -2,7 +2,7 @@
     "meta": {
         "title": "SailGrid",
         "description": "Belegungskalender für die Boote des Vereins.",
-        "loginTitle": "Anmeldung – SailGrid"
+        "loginTitle": "Anmeldung – {name}"
     },
     "nav": {
         "addBooking": "Buchung hinzufügen",
@@ -39,7 +39,7 @@
         "liveToday": "Läuft heute. ",
         "liveShort": "Läuft. ",
         "barLabel": "{state}{boat}, {member}. {when}. Klicken zeigt die Buchung.",
-        "srTitle": "SailGrid Kalender"
+        "srTitle": "{name} Kalender"
     },
     "booking": {
         "title": "Buchung",
@@ -110,21 +110,28 @@
         "overview": "Übersicht",
         "bookings": "Buchungen",
         "boats": "Boote",
-        "hint": "Hinweistext",
+        "hint": "Einstellungen",
         "nav": "Verwaltung",
-        "intro": "Boote, Buchungen und der Hinweistext werden nur hier gepflegt. Der Kalender bleibt für Besucher lesbar.",
+        "intro": "Boote, Buchungen und die Einstellungen werden nur hier gepflegt. Der Kalender bleibt für Besucher lesbar.",
         "editBookings": "Buchungen bearbeiten",
         "editBoats": "Boote bearbeiten ({count})",
-        "editHint": "Hinweistext „Wie kann ich ein Boot buchen?“",
+        "editHint": "Einstellungen",
         "upcoming": "Die nächsten Wochen",
         "empty": "Noch keine Buchungen in diesem Zeitraum."
     },
     "settings": {
-        "title": "Wie kann ich ein Boot buchen?",
-        "intro": "Der Text erscheint im Kalender. Er wird vor dem Speichern bereinigt.",
+        "title": "Einstellungen",
+        "intro": "Name, Verein und die Texte für die Suche stehen oben. Der Popup-Text steht darunter.",
+        "general": "Allgemein",
+        "popupTitle": "Text im Popup „Wie kann ich ein Boot buchen?“",
+        "popupIntro": "Dieser Text öffnet sich im Kalender, wenn jemand auf „Wie kann ich ein Boot buchen?“ klickt. Er wird vor dem Speichern bereinigt.",
+        "siteName": "Name",
+        "clubName": "Name des Vereins",
+        "metaTitle": "Meta-Titel",
+        "metaDescription": "Meta-Beschreibung",
         "notify": "Benachrichtigungen vormerken",
         "notifyHint": "Der Schalter speichert nur den Wunsch. Es wird noch keine Mail verschickt.",
-        "saved": "Hinweistext gespeichert",
+        "saved": "Gespeichert",
         "save": "Speichern"
     },
     "editor": {

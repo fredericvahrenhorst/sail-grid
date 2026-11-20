@@ -1,11 +1,13 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import { readError } from '@/composables/readError';
+import { useSiteSettings } from '@/composables/useSiteSettings';
 
 definePageMeta({ layout: 'plain' });
 const { t } = useI18n();
+const { siteName, clubName } = useSiteSettings();
 useSeoMeta({
-    title: () => t('meta.loginTitle'),
+    title: () => t('meta.loginTitle', { name: siteName.value }),
     robots: 'noindex, nofollow',
 });
 const { loggedIn, fetch } = useUserSession();
@@ -32,7 +34,10 @@ async function submit() {
 <template>
     <div class="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4 py-16">
         <p class="font-brand font-semibold text-5xl text-ink">
-            SailGrid
+            {{ siteName }}
+        </p>
+        <p v-if="clubName" class="mt-3 text-sm font-bold text-ink">
+            {{ clubName }}
         </p>
         <p class="mt-3 text-sm text-mist">
             {{ t('login.intro') }}

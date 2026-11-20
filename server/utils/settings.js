@@ -8,9 +8,21 @@ export async function getSettings() {
         key: 'default',
         bookingInfoText: t('content.defaultBookingInfo'),
         notifyEnabled: false,
+        siteName: '',
+        clubName: '',
+        metaTitle: '',
+        metaDescription: '',
     });
 }
-export async function saveSettings(bookingInfoText, notifyEnabled) {
-    const clean = sanitizeBookingInfo(bookingInfoText);
-    return Setting.findOneAndUpdate({ key: 'default' }, { key: 'default', bookingInfoText: clean, notifyEnabled }, { upsert: true, new: true, setDefaultsOnInsert: true });
+export async function saveSettings(input) {
+    const clean = sanitizeBookingInfo(input.bookingInfoText);
+    return Setting.findOneAndUpdate({ key: 'default' }, {
+        key: 'default',
+        bookingInfoText: clean,
+        notifyEnabled: Boolean(input.notifyEnabled),
+        siteName: input.siteName,
+        clubName: input.clubName,
+        metaTitle: input.metaTitle,
+        metaDescription: input.metaDescription,
+    }, { upsert: true, new: true, setDefaultsOnInsert: true });
 }

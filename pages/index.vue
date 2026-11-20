@@ -1,10 +1,12 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
+import { useSiteSettings } from '@/composables/useSiteSettings';
 
 const { t } = useI18n();
+const { metaTitle, metaDescription } = useSiteSettings();
 useSeoMeta({
-    title: () => t('meta.title'),
-    description: () => t('meta.description'),
+    title: () => metaTitle.value,
+    description: () => metaDescription.value,
 });
 </script>
 
