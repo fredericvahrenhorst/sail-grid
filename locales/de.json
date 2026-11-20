@@ -141,7 +141,9 @@
         "heading": "Überschrift",
         "apply": "Übernehmen",
         "remove": "Entfernen",
-        "placeholder": "name@verein.de oder https://…",
+        "link": "Link",
+        "url": "Adresse",
+        "placeholder": "name{'@'}verein.de oder https://…",
         "invalidLink": "Nur eine Webadresse oder eine E-Mail."
     },
     "errors": {

@@ -8,7 +8,8 @@ const { t } = useI18n();
 const linkOpen = ref(false);
 const linkDraft = ref('');
 const linkError = ref('');
-const linkInput = ref(null);
+const savedRange = ref(null);
+const linkField = ref(null);
 const editor = useEditor({
     content: model.value,
     extensions: [
@@ -52,22 +53,30 @@ function normalizeHref(value) {
     return '';
 }
 
-async function openLink() {
-    const href = editor.value?.getAttributes('link').href || '';
+async function toggleLink() {
+    linkOpen.value = !linkOpen.value;
+    if (!linkOpen.value) return;
+    await nextTick();
+    linkField.value?.$el?.querySelector('input')?.focus();
+}
+
+function rememberSelection() {
+    const current = editor.value;
+    if (!current) return;
+    const { from, to } = current.state.selection;
+    savedRange.value = { from, to };
+    const href = current.getAttributes('link').href || '';
     linkDraft.value = href.replace(/^mailto:/i, '');
     linkError.value = '';
-    linkOpen.value = true;
-    await nextTick();
-    linkInput.value?.focus();
 }
 
 function applyLink() {
     const current = editor.value;
-    if (!current) return;
+    if (!current || !savedRange.value) return;
     const typed = linkDraft.value.trim();
+    const chain = current.chain().focus().setTextSelection(savedRange.value);
     if (!typed) {
-        current.chain().focus().extendMarkRange('link').unsetLink()
-            .run();
+        chain.extendMarkRange('link').unsetLink().run();
         linkOpen.value = false;
         linkError.value = '';
         return;
@@ -77,25 +86,26 @@ function applyLink() {
         linkError.value = t('editor.invalidLink');
         return;
     }
-    const inLink = current.isActive('link');
-    if (current.state.selection.empty && !inLink) {
+    if (savedRange.value.from === savedRange.value.to) {
         const label = typed.replace(/^mailto:/i, '');
-        current.chain().focus().insertContent({
+        chain.insertContent({
             type: 'text',
             text: label,
             marks: [{ type: 'link', attrs: { href } }],
         }).run();
     } else {
-        current.chain().focus().extendMarkRange('link').setLink({ href })
-            .run();
+        chain.extendMarkRange('link').setLink({ href }).run();
     }
     linkOpen.value = false;
     linkError.value = '';
 }
 
 function removeLink() {
-    editor.value?.chain().focus().extendMarkRange('link').unsetLink()
-        .run();
+    const current = editor.value;
+    if (!current) return;
+    const chain = current.chain().focus();
+    if (savedRange.value) chain.setTextSelection(savedRange.value);
+    chain.extendMarkRange('link').unsetLink().run();
     linkOpen.value = false;
     linkError.value = '';
 }
@@ -108,29 +118,39 @@ function removeLink() {
             <button type="button" class="underline" @mousedown.prevent @click="editor.chain().focus().toggleItalic().run()">{{ t('editor.italic') }}</button>
             <button type="button" class="underline" @mousedown.prevent @click="editor.chain().focus().toggleBulletList().run()">{{ t('editor.list') }}</button>
             <button type="button" class="underline" @mousedown.prevent @click="editor.chain().focus().toggleHeading({ level: 2 }).run()">{{ t('editor.heading') }}</button>
-            <button
-                type="button"
-                class="underline"
-                :class="{ 'font-bold text-tide': editor.isActive('link') }"
-                @mousedown.prevent
-                @click="openLink"
-            >
-                Link
-            </button>
+            <div class="relative">
+                <button
+                    type="button"
+                    class="underline"
+                    :class="{ 'font-bold text-tide': editor.isActive('link') }"
+                    @mousedown.prevent="rememberSelection"
+                    @click="toggleLink"
+                >
+                    {{ t('editor.link') }}
+                </button>
+                <div
+                    v-if="linkOpen"
+                    class="absolute top-full left-0 z-20 mt-2 w-72 space-y-3 rounded-sm border border-line bg-white p-3 shadow"
+                >
+                    <UFormField :label="t('editor.url')">
+                        <UInput
+                            ref="linkField"
+                            v-model="linkDraft"
+                            :placeholder="t('editor.placeholder')"
+                            class="w-full"
+                            @keydown.enter.prevent="applyLink"
+                        />
+                    </UFormField>
+                    <p v-if="linkError" class="text-sm font-bold text-danger" role="alert">{{ linkError }}</p>
+                    <div class="flex gap-2">
+                        <UButton type="button" size="sm" @click="applyLink">{{ t('editor.apply') }}</UButton>
+                        <UButton type="button" size="sm" color="neutral" variant="ghost" @click="removeLink">
+                            {{ t('editor.remove') }}
+                        </UButton>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div v-if="linkOpen" class="flex flex-wrap items-center gap-2">
-            <input
-                ref="linkInput"
-                v-model="linkDraft"
-                type="text"
-                :placeholder="t('editor.placeholder')"
-                class="min-w-64 flex-1 rounded-sm border border-line bg-white px-2 py-1 text-sm"
-                @keydown.enter.prevent="applyLink"
-            >
-            <button type="button" class="font-bold underline" @mousedown.prevent @click="applyLink">{{ t('editor.apply') }}</button>
-            <button v-if="editor?.isActive('link')" type="button" class="underline" @mousedown.prevent @click="removeLink">{{ t('editor.remove') }}</button>
-        </div>
-        <p v-if="linkError" class="text-sm font-bold text-danger" role="alert">{{ linkError }}</p>
         <EditorContent :editor="editor" />
     </div>
 </template>

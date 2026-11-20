@@ -141,7 +141,9 @@
         "heading": "Heading",
         "apply": "Apply",
         "remove": "Remove",
-        "placeholder": "name@club.example or https://…",
+        "link": "Link",
+        "url": "Address",
+        "placeholder": "name{'@'}club.example or https://…",
         "invalidLink": "Only a web address or an email address."
     },
     "errors": {
