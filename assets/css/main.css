@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+@import "@fontsource/atkinson-hyperlegible/400.css";
+@import "@fontsource/atkinson-hyperlegible/700.css";
+@import "@fontsource/fraunces/600.css";
+
+/*
+ * Tailwind 4 hält das Theme hier, nicht in einer tailwind.config.js.
+ * Daraus werden Klassen wie text-ink, bg-tide, font-brand, shadow-lift.
+ */
+@theme {
+    --font-sans: "Atkinson Hyperlegible", "Segoe UI", sans-serif;
+    --font-brand: "Fraunces", Georgia, serif;
+
+    --color-ink: #12373a;
+    --color-body: #1c2b2e;
+    --color-mist: #3d5558;
+    --color-faint: #5d7376;
+    --color-wash: #8aa0a3;
+    --color-tide: #0f766e;
+    --color-line: #d5e1e3;
+    --color-foam: #f7fbfb;
+    --color-sea: #e7eef0;
+    --color-dot: #d3e0e2;
+    --color-danger: #9f1239;
+    --color-warn: #9a3412;
+
+    --shadow-lift: 0 6px 16px rgb(20 36 38 / 0.16);
+
+    --animate-month-rise: month-rise 280ms ease;
+
+    @keyframes month-rise {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+}
+
+/* Seitenhintergrund: Fläche plus Punktmuster. Als Klasse bg-harbor. */
+@utility bg-harbor {
+    background-color: var(--color-sea);
+    background-image:
+        radial-gradient(circle at 12% -8%, rgb(15 118 110 / 0.18), transparent 34%),
+        radial-gradient(var(--color-dot) 0.7px, transparent 0.7px);
+    background-size: auto, 16px 16px;
+}

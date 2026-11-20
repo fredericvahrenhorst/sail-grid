@@ -1,0 +1,45 @@
+{
+  "name": "sailgrid",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.5.0",
+  "engines": {
+    "node": ">=20.12.0"
+  },
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "seed": "node --env-file=.env scripts/seed.js",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@fontsource/atkinson-hyperlegible": "^5.2.8",
+    "@fontsource/fraunces": "^5.2.8",
+    "@nuxt/ui": "^3.3.7",
+    "@tiptap/pm": "^3.34.0",
+    "@tiptap/starter-kit": "^3.34.0",
+    "@tiptap/vue-3": "^3.34.0",
+    "date-fns": "^4.1.0",
+    "ical-generator": "^11.1.4",
+    "mongoose": "^8.19.3",
+    "nuxt": "^3.21.11",
+    "nuxt-auth-utils": "^0.5.34",
+    "pinia": "3",
+    "sanitize-html": "^2.17.0",
+    "vue-i18n": "^11.4.23",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.39.1",
+    "@iconify-json/lucide": "^1.2.157",
+    "@nuxt/icon": "1.15.0",
+    "eslint": "^9.39.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-vue": "^10.5.1",
+    "globals": "^16.5.0"
+  }
+}
