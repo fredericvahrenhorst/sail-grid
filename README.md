@@ -57,11 +57,11 @@ pnpm dev
 
 `pnpm seed` legt drei Beispielboote und erfundene Buchungen im aktuellen Zeitraum an. Ein zweiter Lauf ersetzt nur die Buchungen dieser drei Boote. Unter `NODE_ENV=production` bricht das Skript ab. Der Hinweistext im Seed ist Deutsch, auch wenn die Oberfläche auf Englisch steht.
 
-Die App liegt unter [http://localhost:3000](http://localhost:3000). Die Verwaltung liegt unter `/admin`, das Login unter `/login`. Das Passwort ist `ADMIN_PASSWORD` aus der `.env`.
+Die App liegt unter [http://localhost:3000](http://localhost:3000). Die Verwaltung liegt unter `/admin`, das Login unter `/login`. Solange in der Verwaltung kein Passwort gesetzt wurde, gilt `ADMIN_PASSWORD` aus der `.env`.
 
 Nach einer Änderung an der `.env` den Dev-Server neu starten. Die Sprache liest die App beim Start.
 
-`pnpm lint` prüft den Quelltext.
+`pnpm lint` prüft den Quelltext. Es gibt keine Testsuite.
 
 ## Docker Compose
 
@@ -102,7 +102,8 @@ ALLOWED_FRAME_ANCESTORS=self https://verein.example
 - Zwei Monate nebeneinander, auf dem Handy ein Monat
 - Navigation über Monate und Sprungfelder für Monat und Jahr
 - Filter nach Boot über `?boatId=`, damit ein iFrame mit einem Boot starten kann
-- Balken zeigen Boot und eingebuchte Person. Laufende Buchungen sind markiert
+- Sprung auf den heutigen Monat über „Heute“. Der Knopf ist gesperrt, wenn der linke Monat der aktuelle ist
+- Balken zeigen Boot und eingebuchte Person. Laufende Buchungen sind markiert. Die Balkenfarbe gehört zum Boot, nicht zu den Oberflächenfarben
 - Klick öffnet Details: Boot, Zeitraum, eingebucht von, Notizen, Route, Eintragszeit
 - Leere Felder stehen als „keine Angaben“, auf Englisch als „no details“
 - Hinweistext „Wie kann ich ein Boot buchen?“
@@ -112,17 +113,18 @@ ALLOWED_FRAME_ANCESTORS=self https://verein.example
 
 ### Admin
 
-„Verwaltung“ ist immer sichtbar. Die Seiten darunter verlangen das Login. Eingeloggt kommen daneben „Buchung hinzufügen“ und „Abmelden“. Abmelden bleibt auf dem Kalender.
+„Verwaltung“ ist im Kalender immer sichtbar. Die Seiten unter `/admin` verlangen das Login (`middleware/admin.js`). Eingeloggt kommen im Kalender daneben „Buchung hinzufügen“ und „Abmelden“. Abmelden im Kalender bleibt auf der Seite. Abmelden in der Verwaltung geht nach `/login`.
 
-- Login mit dem Passwort aus der Umgebung. Darunter führt ein Link zurück zum Kalender
+- Login unter `/login`, Layout `plain`. Darunter führt ein Link zurück zum Kalender
+- Name, Vereinsname, Meta-Titel und Meta-Beschreibung. Ein leeres Feld lässt den Text aus `locales/` stehen
 - Buchung im Kalender-Popup anlegen, bearbeiten und löschen. Löschen fragt vorher „Bist du dir sicher?“
 - Boote anlegen, bearbeiten, sortieren, archivieren (löschen nur ohne Buchungen)
 - Buchungsliste mit Zeitraum, ganztägig oder mit Uhrzeit
 - Überlappung auf demselben Boot wird gemeldet und kann bestätigt werden
-- HTML-Hinweistext, serverseitig auf eine Allowlist gekürzt
+- HTML-Hinweistext im TipTap-Editor, serverseitig auf eine Allowlist gekürzt
 - Schalter für Benachrichtigungen speichert nur den Wunsch. Es geht keine Mail raus
-- Farben der Oberfläche. Ein leeres Feld lässt die Vorgabe stehen
-- Admin-Passwort ändern: aktuelles Passwort und das neue zweimal. Danach gilt das gespeicherte Passwort für die Anmeldung
+- Farben der Oberfläche. Ein leeres Feld lässt die Vorgabe aus `assets/css/main.css` stehen
+- Admin-Passwort ändern: aktuelles Passwort und das neue zweimal. Danach gilt der gespeicherte Hash, nicht mehr der Wert aus der Umgebung
 
 ## Deployment (Coolify)
 
@@ -170,24 +172,73 @@ Kalender-Abo eines Boots: `https://sailgrid.example.com/api/ics/boat/BOOT_ID.ics
 
 | Collection | Felder |
 | --- | --- |
-| `boats` | `name`, `description`, `imageUrl`, `color`, `active`, `sortOrder`, Zeitstempel |
-| `bookings` | `boatId`, `memberName`, `notes`, `route`, `start`, `end`, `allDay`, Zeitstempel. Index auf `boatId` + `start` |
-| `settings` | ein Dokument `key: default` mit `bookingInfoText` (HTML), `notifyEnabled`, Name, Verein, Meta-Texten und `colors`. Ein geändertes Admin-Passwort liegt als Hash im selben Dokument und geht nicht über die API raus |
+| `boats` | `name`, `description`, `imageUrl`, `color` (`#rrggbb`), `active`, `sortOrder`, Zeitstempel. Index auf `active` + `sortOrder` + `name` |
+| `bookings` | `boatId`, `memberName`, `notes`, `route`, `start`, `end`, `allDay`, Zeitstempel. Indizes auf `boatId` + `start` und auf `start` + `end` |
+| `settings` | ein Dokument `key: default`. Felder: `bookingInfoText`, `notifyEnabled`, `siteName`, `clubName`, `metaTitle`, `metaDescription`, `colors`, `passwordHash` |
+
+`colors` hat die Schlüssel `ink`, `body`, `mist`, `faint`, `wash`, `tide`, `line`, `foam`, `sea`, `dot`, `danger`, `warn`. Leer heißt: die CSS-Vorgabe gilt. `passwordHash` ist ein scrypt-Hash und fehlt in `GET /api/settings`.
+
+Ganztägige Buchungen laufen lokal von 00:00 bis 23:59:59 und werden als ISO-Zeitpunkt gespeichert. `2024-01-01` allein ist UTC, `2024-01-01T10:00` ist lokal. Die Umwandlung steht in `composables/useDateFormat.js`.
+
+## Wo was geändert wird
+
+| Aufgabe | Datei |
+| --- | --- |
+| Texte der Oberfläche | `locales/de.json` und `locales/en.json`, dieselben Schlüssel |
+| Sprache der Instanz | `NUXT_PUBLIC_LANG`, gelesen in `plugins/locale.js` |
+| Name, Verein, Meta, Popup, Farben, Passwort | `pages/admin/settings.vue`, gespeichert über `server/utils/settings.js` |
+| Fallback, wenn Name oder Meta leer sind | `composables/useSiteSettings.js` |
+| Vorgaben der Oberflächenfarben | `assets/css/main.css` (`@theme`) |
+| Liste der überschreibbaren Farben | `lib/theme-colors.js` und `server/utils/theme-colors.js`, beide gleich halten |
+| Farben zur Laufzeit an `<html>` hängen | `plugins/theme-colors.js` |
+| Kalenderzustand, Monate, Filter, „Heute“ | `stores/calendar.js` |
+| Zwei-Monats-Ansicht | `components/calendar/CalendarView.vue`, `components/calendar/MonthGrid.vue` |
+| Buchungs-Popup und Hinweis-Popup | `components/booking/` |
+| Boot- und Buchungsformulare | `components/admin/BoatForm.vue`, `components/admin/BookingForm.vue` |
+| Hinweistext-Editor | `components/admin/TipTapEditor.vue` |
+| Kopfzeile Kalender, `?embed=true` | `layouts/default.vue` |
+| Kopfzeile Verwaltung | `layouts/admin.vue` |
+| Login ohne Verwaltungskopf | `layouts/plain.vue`, `pages/login.vue` |
+| Session auf Admin-Seiten | `middleware/admin.js` |
+| Session in der API | `server/utils/auth.js`, `requireAdmin` |
+| Passwort prüfen und hashen | `server/utils/password.js` |
+| Eingabe prüfen | `server/utils/schemas.js` |
+| HTML des Hinweistexts | `server/utils/sanitize.js` |
+| Überlappende Buchungen | `server/utils/overlap.js` |
+| ICS | `server/routes/api/ics/`, `server/utils/ics.js` |
+| Antwort-Header, iFrame-Erlaubnis | `server/middleware/security.js` |
+| Produktion lehnt Platzhalter-Passwörter ab | `server/plugins/production-secrets.js` |
+| Nuxt, Module, `runtimeConfig` | `nuxt.config.js` |
+| Nuxt-UI-Farben `primary` und `neutral` | `app.config.js`. Das sind nicht die Oberflächenfarben aus `main.css` |
+
+`layouts/embed.vue` hängt an keiner Seite. Die Einbettung läuft über `?embed=true` in `layouts/default.vue`.
+
+## Konventionen
+
+Quelltext und Kommentare sind Englisch. Die Oberfläche ist Deutsch oder Englisch aus `locales/`. In `.js`- und `.vue`-Dateien kein TypeScript. Einzug vier Leerzeichen, Semikolons, keine Leerstelle vor den Funktionsklammern.
+
+Vue-Komponenten holen `useI18n` aus `vue-i18n`. Es ist kein `@nuxtjs/i18n` eingebunden. Neue Schlüssel in beide Sprachdateien. Server-Texte laufen über `server/utils/t.js`.
+
+`server/utils` importiert Nitro von selbst. Neue Helfer dort nicht noch einmal von Hand importieren, außer der Name kollidiert. `hashPassword` und `verifyPassword` gehören `nuxt-auth-utils`. Die App nutzt `hashAdminPassword` und `verifyAdminPassword`.
 
 ## Projektstruktur
 
 ```text
-locales/          de.json und en.json, eine Sprache pro Instanz
-plugins/          vue-i18n und Pinia
-stores/           Pinia für den öffentlichen Kalender
-composables/      Datumsformat und Fehlermeldungen
-components/       Kalender, Modals, Admin-Formulare
-pages/            Kalender, Login, Admin
+locales/          de.json und en.json, gleiche Schlüssel
+plugins/          locale.js, theme-colors.js, pinia.js
+stores/           calendar.js, öffentlicher Kalender
+composables/      useSiteSettings, useDateFormat, readError
+components/       Kalender, Buchungs-Popups, Admin-Formulare, TipTap
+layouts/          default, admin, plain. embed.vue ist unbenutzt
+pages/            /, /login, /admin, /admin/boats, /admin/bookings, /admin/settings
+lib/              Farb-Liste für den Client
 server/api/       REST für Boote, Buchungen, Settings, Auth
 server/routes/    ICS-Downloads
-server/models/    Mongoose-Schemas
-server/utils/     Auth, Validierung, Übersetzung der API
+server/models/    Mongoose: Boat, Booking, Setting
+server/utils/     Auth, Zod, Sanitize, Daten, Farben für den Server
+server/middleware security.js, Header und Origin
 scripts/seed.js   Beispieldaten, nur außerhalb der Produktion
+assets/css/       Tailwind-4-Theme, keine tailwind.config.js
 ```
 
 ## API
@@ -200,9 +251,11 @@ scripts/seed.js   Beispieldaten, nur außerhalb der Produktion
 | POST, PUT, DELETE | `/api/boats` | Admin. DELETE löscht nur ohne Buchungen, sonst Archiv |
 | GET | `/api/bookings?boatId=&from=&to=` | öffentlich, höchstens 560 Tage und 1000 Einträge |
 | POST, PUT, DELETE | `/api/bookings` | Admin. Überlappung antwortet mit 409, `force: true` speichert trotzdem |
-| GET | `/api/settings` | öffentlich |
-| PUT | `/api/settings` | Admin |
-| POST | `/api/auth/login`, `/api/auth/logout` | Login öffentlich, sonst Session |
+| GET | `/api/settings` | öffentlich. Ohne `passwordHash`. Leere Identitätsfelder sind leere Strings, die Fallbacks macht der Client |
+| PUT | `/api/settings` | Admin. Schreibt Identität, Farben, Hinweistext und `notifyEnabled`, nicht das Passwort |
+| POST | `/api/auth/login`, `/api/auth/logout` | Login öffentlich, sonst Session. Fünf Versuche pro Minute und IP, im Prozessspeicher |
+| GET | `/api/auth/me` | öffentlich, antwortet `{ admin: true|false }` |
+| POST | `/api/auth/password` | Admin. Body: `currentPassword`, `newPassword`, `confirmPassword`. Neues Passwort mindestens 12 Zeichen, nicht `change-me` und nicht `root` |
 | GET | `/api/ics/booking/:id.ics`, `/api/ics/boat/:id.ics` | öffentlich |
 
 ## Lizenz
