@@ -121,7 +121,7 @@
     },
     "settings": {
         "title": "Settings",
-        "intro": "Name, club, and the search texts are at the top. The popup text is below.",
+        "intro": "Name, club, and the search texts are at the top. Colors, popup text, and the password are below.",
         "general": "General",
         "popupTitle": "Text in the “How do I book a boat?” popup",
         "popupIntro": "This text opens in the calendar when someone clicks “How do I book a boat?”. It is cleaned before it is saved.",
@@ -132,7 +132,34 @@
         "notify": "Prepare notifications",
         "notifyHint": "The switch only stores the preference. No email is sent yet.",
         "saved": "Saved",
-        "save": "Save"
+        "save": "Save",
+        "colors": {
+            "title": "Colors",
+            "intro": "These colors replace the defaults across the site. An empty field keeps the default.",
+            "reset": "Default",
+            "ink": "Headings",
+            "body": "Body text",
+            "mist": "Secondary text",
+            "faint": "Quiet labels",
+            "wash": "Muted days",
+            "tide": "Links and highlights",
+            "line": "Dividers",
+            "foam": "Light surfaces",
+            "sea": "Page background",
+            "dot": "Dot grid",
+            "danger": "Errors",
+            "warn": "Warnings"
+        },
+        "password": {
+            "title": "Password",
+            "intro": "Enter the current password, then the new one twice. It is then used to sign in.",
+            "current": "Current password",
+            "next": "New password",
+            "confirm": "Repeat new password",
+            "hint": "At least 12 characters.",
+            "save": "Change password",
+            "saved": "Password changed"
+        }
     },
     "editor": {
         "bold": "Bold",
@@ -159,6 +186,10 @@
         "badRange": "Invalid date range",
         "rangeTooBig": "The date range is too large",
         "loginFailed": "Sign-in failed",
+        "passwordCurrent": "The current password is wrong.",
+        "passwordMismatch": "The two new passwords do not match.",
+        "passwordShort": "The new password needs at least 12 characters.",
+        "passwordBlocked": "This password is not allowed.",
         "rateLimit": "Too many attempts. Please wait a moment.",
         "badDate": "Invalid date",
         "endBeforeStart": "The end must be after the start",

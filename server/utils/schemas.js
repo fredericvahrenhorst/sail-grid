@@ -1,4 +1,11 @@
 import { z } from 'zod';
+import { THEME_COLORS } from './theme-colors';
+
+const hexColor = z.string().trim().toLowerCase().regex(/^(|#[0-9a-f]{6})$/);
+const themeColorSchema = z.object(Object.fromEntries(THEME_COLORS.map((color) => [
+    color.key,
+    hexColor.optional().default(''),
+])));
 
 const httpsUrl = z.string().trim().max(2000).refine((value) => value === '' || /^https:\/\/\S+$/i.test(value), 'Bild-URL muss leer sein oder mit https:// beginnen');
 export const boatSchema = z.object({
@@ -35,6 +42,12 @@ export const settingsSchema = z.object({
         .default(''),
     metaDescription: z.string().trim().max(300).optional()
         .default(''),
+    colors: themeColorSchema.optional().default({}),
+});
+export const passwordChangeSchema = z.object({
+    currentPassword: z.string().min(1).max(200),
+    newPassword: z.string().min(1).max(200),
+    confirmPassword: z.string().min(1).max(200),
 });
 export const boatOrderSchema = z.object({
     ids: z.array(z.string().trim().min(1)).min(1).max(500),

@@ -81,7 +81,7 @@ Nuxt übernimmt eigene Werte nur, wenn der Name mit `NUXT_` beginnt. Compose set
 | --- | --- |
 | `MONGODB_URI` | Mongo-Verbindung. In Coolify zusätzlich `NUXT_MONGODB_URI`. Lokal `mongodb://localhost:27017`, in Compose `mongodb://mongo:27017`. |
 | `MONGODB_DB` | Datenbankname, Default `sailgrid`. Zusätzlich `NUXT_MONGODB_DB`. |
-| `ADMIN_PASSWORD` | Passwort für `/login`. Zusätzlich `NUXT_ADMIN_PASSWORD`. Produktion: mindestens 12 Zeichen, nicht `change-me` und nicht `root`. |
+| `ADMIN_PASSWORD` | Passwort für `/login`, solange in der Verwaltung keins gesetzt ist. Zusätzlich `NUXT_ADMIN_PASSWORD`. Produktion: mindestens 12 Zeichen, nicht `change-me` und nicht `root`. |
 | `NUXT_SESSION_PASSWORD` | Signiert das HttpOnly-Session-Cookie. Mindestens 32 Zeichen. Der Platzhalter aus `.env.example` und der Build-Platzhalter sind gesperrt. |
 | `NUXT_PUBLIC_BASE_URL` | Öffentliche Basis-URL für Teilen-Links und ICS. Ohne abschließenden Schrägstrich. |
 | `NUXT_PUBLIC_LANG` | `de` oder `en`. Default `de`. Gilt für Oberfläche, API-Meldungen und Datumsformat. |
@@ -121,6 +121,8 @@ ALLOWED_FRAME_ANCESTORS=self https://verein.example
 - Überlappung auf demselben Boot wird gemeldet und kann bestätigt werden
 - HTML-Hinweistext, serverseitig auf eine Allowlist gekürzt
 - Schalter für Benachrichtigungen speichert nur den Wunsch. Es geht keine Mail raus
+- Farben der Oberfläche. Ein leeres Feld lässt die Vorgabe stehen
+- Admin-Passwort ändern: aktuelles Passwort und das neue zweimal. Danach gilt das gespeicherte Passwort für die Anmeldung
 
 ## Deployment (Coolify)
 
@@ -170,7 +172,7 @@ Kalender-Abo eines Boots: `https://sailgrid.example.com/api/ics/boat/BOOT_ID.ics
 | --- | --- |
 | `boats` | `name`, `description`, `imageUrl`, `color`, `active`, `sortOrder`, Zeitstempel |
 | `bookings` | `boatId`, `memberName`, `notes`, `route`, `start`, `end`, `allDay`, Zeitstempel. Index auf `boatId` + `start` |
-| `settings` | ein Dokument `key: default` mit `bookingInfoText` (HTML) und `notifyEnabled` |
+| `settings` | ein Dokument `key: default` mit `bookingInfoText` (HTML), `notifyEnabled`, Name, Verein, Meta-Texten und `colors`. Ein geändertes Admin-Passwort liegt als Hash im selben Dokument und geht nicht über die API raus |
 
 ## Projektstruktur
 

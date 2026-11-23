@@ -1,3 +1,5 @@
+import { emptyThemeColors } from './theme-colors';
+
 export function serializeBoat(boat) {
     return {
         id: String(boat._id),
@@ -28,6 +30,7 @@ export function serializeBooking(booking) {
     };
 }
 export function serializeSettings(setting) {
+    const colors = setting.colors?.toObject?.() || setting.colors || {};
     return {
         bookingInfoText: setting.bookingInfoText || '',
         notifyEnabled: Boolean(setting.notifyEnabled),
@@ -35,5 +38,15 @@ export function serializeSettings(setting) {
         clubName: setting.clubName || '',
         metaTitle: setting.metaTitle || '',
         metaDescription: setting.metaDescription || '',
+        colors: storedPublicColors(colors),
     };
+}
+
+function storedPublicColors(source) {
+    const colors = emptyThemeColors();
+    Object.keys(colors).forEach((key) => {
+        const hex = String(source[key] || '').trim().toLowerCase();
+        colors[key] = /^#[0-9a-f]{6}$/.test(hex) ? hex : '';
+    });
+    return colors;
 }

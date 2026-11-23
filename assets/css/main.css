@@ -45,7 +45,7 @@
 @utility bg-harbor {
     background-color: var(--color-sea);
     background-image:
-        radial-gradient(circle at 12% -8%, rgb(15 118 110 / 0.18), transparent 34%),
+        radial-gradient(circle at 12% -8%, rgb(from var(--color-tide) r g b / 0.18), transparent 34%),
         radial-gradient(var(--color-dot) 0.7px, transparent 0.7px);
     background-size: auto, 16px 16px;
 }

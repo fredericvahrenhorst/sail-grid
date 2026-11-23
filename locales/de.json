@@ -121,7 +121,7 @@
     },
     "settings": {
         "title": "Einstellungen",
-        "intro": "Name, Verein und die Texte für die Suche stehen oben. Der Popup-Text steht darunter.",
+        "intro": "Name, Verein und die Texte für die Suche stehen oben. Farben, Popup-Text und Passwort stehen darunter.",
         "general": "Allgemein",
         "popupTitle": "Text im Popup „Wie kann ich ein Boot buchen?“",
         "popupIntro": "Dieser Text öffnet sich im Kalender, wenn jemand auf „Wie kann ich ein Boot buchen?“ klickt. Er wird vor dem Speichern bereinigt.",
@@ -132,7 +132,34 @@
         "notify": "Benachrichtigungen vormerken",
         "notifyHint": "Der Schalter speichert nur den Wunsch. Es wird noch keine Mail verschickt.",
         "saved": "Gespeichert",
-        "save": "Speichern"
+        "save": "Speichern",
+        "colors": {
+            "title": "Farben",
+            "intro": "Diese Farben ersetzen die Vorgaben auf der ganzen Seite. Ein leeres Feld lässt die Vorgabe stehen.",
+            "reset": "Vorgabe",
+            "ink": "Überschriften",
+            "body": "Fließtext",
+            "mist": "Nebentext",
+            "faint": "Leise Beschriftung",
+            "wash": "Abgeschwächte Tage",
+            "tide": "Links und Markierung",
+            "line": "Trennlinien",
+            "foam": "Helle Flächen",
+            "sea": "Seitenhintergrund",
+            "dot": "Punktraster",
+            "danger": "Fehler",
+            "warn": "Hinweis"
+        },
+        "password": {
+            "title": "Passwort",
+            "intro": "Zuerst das aktuelle Passwort, danach das neue zweimal. Danach gilt es für die Anmeldung.",
+            "current": "Aktuelles Passwort",
+            "next": "Neues Passwort",
+            "confirm": "Neues Passwort wiederholen",
+            "hint": "Mindestens 12 Zeichen.",
+            "save": "Passwort ändern",
+            "saved": "Passwort geändert"
+        }
     },
     "editor": {
         "bold": "Fett",
@@ -159,6 +186,10 @@
         "badRange": "Ungültiger Zeitraum",
         "rangeTooBig": "Zeitraum ist zu groß",
         "loginFailed": "Anmeldung fehlgeschlagen",
+        "passwordCurrent": "Das aktuelle Passwort stimmt nicht.",
+        "passwordMismatch": "Die beiden neuen Passwörter stimmen nicht überein.",
+        "passwordShort": "Das neue Passwort braucht mindestens 12 Zeichen.",
+        "passwordBlocked": "Dieses Passwort ist nicht erlaubt.",
         "rateLimit": "Zu viele Versuche. Bitte kurz warten.",
         "badDate": "Ungültiges Datum",
         "endBeforeStart": "Das Ende muss nach dem Start liegen",
